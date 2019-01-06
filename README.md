@@ -2,7 +2,7 @@
 
 Experimenting with Audio Recording, Playing, Voice To Text. 
 
-## Voice To Text
+### Voice To Text
 <img src="https://github.com/PoojaB26/FlutterAudioExperiments/blob/master/screenshots/1.png" width=200>
 
 ## Getting Started
