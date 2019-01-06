@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:speech_recognition/speech_recognition.dart';
 import 'package:audio_experiments/language.dart';
 
-class VoiceToTextExample extends StatefulWidget {
+
+
+class VoiceTextHome extends StatefulWidget {
+
+
   @override
-  _VoiceToTextExampleState createState() => new _VoiceToTextExampleState();
+  VoiceTextHomeState createState() {
+    return new VoiceTextHomeState();
+  }
 }
 
-class _VoiceToTextExampleState extends State<VoiceToTextExample> {
+class VoiceTextHomeState extends State<VoiceTextHome> {
   SpeechRecognition _speech;
 
   bool _speechRecognitionAvailable = false;
@@ -40,51 +46,79 @@ class _VoiceToTextExampleState extends State<VoiceToTextExample> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('SpeechRecognition'),
-          actions: [
-            new PopupMenuButton<Language>(
-              onSelected: _selectLangHandler,
-              itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
-            )
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.purpleAccent,
+        actions: [
+          new PopupMenuButton<Language>(
+            onSelected: _selectLangHandler,
+            itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
+          )
+        ],
+      ),
+      body: Container(
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+
+                FloatingActionButton(
+                  mini: true,
+                  backgroundColor: Colors.purple,
+                  child: Icon(Icons.cancel, size: 24.0, color: Colors.purpleAccent,),
+                  onPressed: (){
+                    if( _isListening)
+                      cancel();
+                    else
+                      null;
+                  },
+                ),
+                SizedBox(width: 10.0,),
+                FloatingActionButton(
+                  backgroundColor: Colors.purple,
+                  child: Icon(Icons.mic, size: 40.0,),
+                  onPressed: (){
+                    if( _speechRecognitionAvailable && !_isListening)
+                      start();
+                    else
+                      null;
+                  },
+                ),
+                SizedBox(width: 10.0,),
+                FloatingActionButton(
+                  mini: true,
+                  backgroundColor: Colors.purple,
+                  child: Icon(Icons.stop, size: 24.0, color: Colors.purpleAccent,),
+                  onPressed: (){
+                    if( _isListening)
+                      stop();
+                    else
+                      null;
+                  },
+                ),
+              ],
+            ),
+
+            SizedBox(height: 20.0,),
+            Container(
+                width: MediaQuery.of(context).size.width*0.7,
+                decoration: new BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: new BorderRadius.circular(5.0),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 15.0),
+                child: Text(transcription))
           ],
         ),
-        body: new Padding(
-            padding: new EdgeInsets.all(8.0),
-            child: new Center(
-              child: new Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  new Expanded(
-                      child: new Container(
-                          padding: const EdgeInsets.all(8.0),
-                          color: Colors.grey.shade200,
-                          child: new Text(transcription)
-                      )
-                  ),
-                  _buildButton(
-                    onPressed: _speechRecognitionAvailable && !_isListening
-                        ? () => start()
-                        : null,
-                    label: _isListening
-                        ? 'Listening...'
-                        : 'Listen (${selectedLang.code})',
-                  ),
-                  _buildButton(
-                    onPressed: _isListening ? () => cancel() : null,
-                    label: 'Cancel',
-                  ),
-                  _buildButton(
-                    onPressed: _isListening ? () => stop() : null,
-                    label: 'Stop',
-                  ),
-                ],
-              ),
-            )),
+      ),
     );
   }
+
 
   List<CheckedPopupMenuItem<Language>> get _buildLanguagesWidgets => languages
       .map((l) => new CheckedPopupMenuItem<Language>(
@@ -111,7 +145,7 @@ class _VoiceToTextExampleState extends State<VoiceToTextExample> {
 
   void start() => _speech
       .listen(locale: selectedLang.code)
-      .then((result) => print('_MyAppState.start => result ${result}'));
+      .then((result) => print('_MyAppState.start => result $result'));
 
   void cancel() =>
       _speech.cancel().then((result) => setState(() => _isListening = result));
